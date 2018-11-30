@@ -1,5 +1,6 @@
 <template>
-  <a-layout-header v-if="!headerBarFixed" :class="[fixedHeader && 'ant-header-fixedHeader']" :style="{ padding: '0', width: fixedHeader ? `calc(100% - ${sidebarOpened ? 256 : 80}px)` : '100%' }">
+  <!-- , width: fixedHeader ? `calc(100% - ${sidebarOpened ? 256 : 80}px)` : '100%'  -->
+  <a-layout-header v-if="!headerBarFixed" :class="[fixedHeader && 'ant-header-fixedHeader', sidebarOpened ? 'ant-header-side-opened' : 'ant-header-side-closed', ]" :style="{ padding: '0' }">
     <div v-if="mode === 'sidemenu'" class="header">
       <a-icon
         v-if="device==='mobile'"
@@ -90,12 +91,12 @@
         mainMenu: state => state.permission.addRouters,
         sidebarOpened: state => state.app.sidebar.opened,
         fixedHeader: state => state.app.fixedHeader,
-        swipeDownHiddenHeader: state => state.app.swipeDownHiddenHeader,
+        autoHideHeader: state => state.app.autoHideHeader,
       }),
     },
     methods: {
       handleScroll () {
-        if (this.swipeDownHiddenHeader) {
+        if (this.autoHideHeader) {
           let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
           if (scrollTop > 100) {
             this.headerBarFixed = true

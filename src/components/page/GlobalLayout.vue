@@ -1,5 +1,5 @@
 <template>
-  <a-layout class="layout" :class="device">
+  <a-layout class="layout" :class="[device]">
 
     <template v-if="layoutMode === 'sidemenu'">
       <a-drawer
@@ -47,7 +47,7 @@
       </a-drawer>
     </template>
 
-    <a-layout :class="[layoutMode]">
+    <a-layout :class="[layoutMode, `content-width-${contentWidth}`]" :style="{ paddingLeft: fixSiderbar && device === 'desktop' ? `${sidebarOpened ? 256 : 80}px` : '0' }">
       <!-- layout header -->
       <global-header :mode="layoutMode" :theme="theme" :collapsed="collapsed" :device="device" @toggle="toggle"/>
 
@@ -97,9 +97,17 @@
         layoutMode: state => state.app.layout,
         sidebarOpened: state => state.app.sidebar.opened,
         fixedHeader: state => state.app.fixedHeader,
+        fixSiderbar: state => state.app.fixSiderbar,
+        contentWidth: state => state.app.contentWidth,
         theme: state => state.app.theme,
         device: state => state.app.device,
       })
+    },
+    watch: {
+      sidebarOpened(val) {
+        console.log('watch',val)
+        this.collapsed = !val
+      },
     },
     created() {
       this.menus = this.mainMenu.find((item) => item.path === '/').children
@@ -143,13 +151,26 @@
         }
       }
 
+      /**
+       * ant-table-wrapper
+       * 覆盖的表格手机模式样式，如果想修改在手机上表格最低宽度，可以在这里改动
+       */
       .ant-table-wrapper {
-        .ant-table-body {
+        .ant-table-content {
           overflow-y: auto;
         }
+        .ant-table-body {
+          min-width: 800px;
+        }
       }
+      .sidemenu {
+        .ant-header-fixedHeader {
 
-
+          &.ant-header-side-opened, &.ant-header-side-closed  {
+            width: 100%
+          }
+        }
+      }
 
     }
 
@@ -167,14 +188,58 @@
         background: rgba(0, 0, 0, 0.025);
       }
     }
-    .ant-header-fixedHeader {
-      position: fixed;
-      top: 0;
-      right: 0;
-      z-index: 9;
-      width: 100%;
-      transition: width .2s;
+
+    .topmenu {
+      .ant-header-fixedHeader {
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 9;
+        width: 100%;
+        transition: width .2s;
+
+        &.ant-header-side-opened {
+          width: 100%;
+        }
+
+        &.ant-header-side-closed {
+          width: 100%;
+        }
+      }
+      /* 必须为 topmenu  才能启用流式布局 */
+      &.content-width-Fluid {
+        .header-index-wide {
+          max-width: unset;
+          margin-left: 24px;
+        }
+
+        .page-header-index-wide {
+          max-width: unset;
+        }
+      }
+
     }
+
+    .sidemenu {
+      .ant-header-fixedHeader {
+        position: fixed;
+        top: 0;
+        right: 0;
+        z-index: 9;
+        width: 100%;
+        transition: width .2s;
+
+        &.ant-header-side-opened {
+          width: calc(100% - 256px)
+        }
+
+        &.ant-header-side-closed {
+          width: calc(100% - 80px)
+        }
+      }
+    }
+
+
 
     .header {
       height: 64px;
@@ -399,6 +464,11 @@
     box-shadow: 2px 0 6px rgba(0, 21, 41, .35);
     position: relative;
     z-index: 10;
+
+    &.ant-fixed-sidemenu {
+      position: fixed;
+      height: 100%;
+    }
 
     .logo {
       height: 64px;
