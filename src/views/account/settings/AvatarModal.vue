@@ -1,7 +1,13 @@
 <template>
-  <a-modal :visible="visible" title="修改头像" :maskClosable="false" :confirmLoading="confirmLoading" :width="800">
+  <a-modal
+    title="修改头像"
+    :visible="visible"
+    :maskClosable="false"
+    :confirmLoading="confirmLoading"
+    :width="800"
+    @cancel="cancelHandel">
     <a-row>
-      <a-col :span="12" :style="{height: '350px'}">
+      <a-col :xs="24" :md="12" :style="{height: '350px'}">
         <vue-cropper
           ref="cropper"
           :img="options.img"
@@ -14,7 +20,7 @@
         >
         </vue-cropper>
       </a-col>
-      <a-col :span="12" :style="{height: '350px'}">
+      <a-col :xs="24" :md="12" :style="{height: '350px'}">
         <div class="avatar-upload-preview">
           <img :src="previews.url" :style="previews.img"/>
         </div>
@@ -48,21 +54,21 @@
           fixedBox: true
         },
         previews: {},
-      };
+      }
     },
     methods: {
       edit(id) {
-        this.visible = true;
-        this.id = id;
+        this.visible = true
+        this.id = id
         /* 获取原始头像 */
 
       },
       close() {
-        this.id = null;
-        this.visible = false;
+        this.id = null
+        this.visible = false
       },
       cancelHandel() {
-        this.close();
+        this.close()
       },
       okHandel() {
         const vm = this
@@ -71,7 +77,7 @@
         setTimeout(() => {
           vm.confirmLoading = false
           vm.close()
-          vm.$message.success('上传头像成功');
+          vm.$message.success('上传头像成功')
         }, 2000)
 
       },
@@ -80,7 +86,7 @@
         this.previews = data
       }
     }
-  };
+  }
 </script>
 
 <style lang="scss" scoped>

@@ -5,12 +5,12 @@
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
             <a-form-item label="规则编号">
-              <a-input placeholder=""/>
+              <a-input v-model="queryParam.id" placeholder=""/>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="使用状态">
-              <a-select placeholder="请选择" default-value="0">
+              <a-select v-model="queryParam.status" placeholder="请选择" default-value="0">
                 <a-select-option value="0">全部</a-select-option>
                 <a-select-option value="1">关闭</a-select-option>
                 <a-select-option value="2">运行中</a-select-option>
@@ -20,17 +20,17 @@
           <template v-if="advanced">
             <a-col :md="8" :sm="24">
               <a-form-item label="调用次数">
-                <a-input-number style="width: 100%"/>
+                <a-input-number v-model="queryParam.callNo" style="width: 100%"/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="更新日期">
-                <a-date-picker style="width: 100%" placeholder="请输入更新日期"/>
+                <a-date-picker v-model="queryParam.date" style="width: 100%" placeholder="请输入更新日期"/>
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
               <a-form-item label="使用状态">
-                <a-select placeholder="请选择" default-value="0">
+                <a-select v-model="queryParam.useStatus" placeholder="请选择" default-value="0">
                   <a-select-option value="0">全部</a-select-option>
                   <a-select-option value="1">关闭</a-select-option>
                   <a-select-option value="2">运行中</a-select-option>
@@ -49,8 +49,8 @@
           </template>
           <a-col :md="!advanced && 8 || 24" :sm="24">
             <span class="table-page-search-submitButtons" :style="advanced && { float: 'right', overflow: 'hidden' } || {} ">
-              <a-button type="primary">查询</a-button>
-              <a-button style="margin-left: 8px">重置</a-button>
+              <a-button type="primary" @click="$refs.table.refresh()">查询</a-button>
+              <a-button style="margin-left: 8px" @click="() => queryParam = {}">重置</a-button>
               <a @click="toggleAdvanced" style="margin-left: 8px">
                 {{ advanced ? '收起' : '展开' }}
                 <a-icon :type="advanced ? 'up' : 'down'"/>
@@ -62,8 +62,8 @@
     </div>
 
     <div class="table-operator">
-      <a-button type="primary" icon="plus">新建</a-button>
-      <a-dropdown v-if="selectedRowKeys.length > 0">
+      <a-button type="primary" icon="plus" v-if="$auth('table.add')">新建</a-button>
+      <a-dropdown v-if="$auth('table.edit') && selectedRowKeys.length > 0">
         <a-menu slot="overlay">
           <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
           <!-- lock | unlock -->
@@ -84,8 +84,10 @@
       @onSelect="onChange"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="handleEdit(record)">编辑</a>
-        <a-divider type="vertical" />
+        <template v-if="$auth('table.update')">
+          <a @click="handleEdit(record)">编辑</a>
+          <a-divider type="vertical" />
+        </template>
         <a-dropdown>
           <a class="ant-dropdown-link">
             更多 <a-icon type="down" />
@@ -94,10 +96,10 @@
             <a-menu-item>
               <a href="javascript:;">详情</a>
             </a-menu-item>
-            <a-menu-item>
+            <a-menu-item v-if="$auth('table.disable')">
               <a href="javascript:;">禁用</a>
             </a-menu-item>
-            <a-menu-item>
+            <a-menu-item v-if="$auth('table.delete')">
               <a href="javascript:;">删除</a>
             </a-menu-item>
           </a-menu>
@@ -180,13 +182,14 @@
 
 <script>
   import STable from '@/components/table/'
-  import ATextarea from "ant-design-vue/es/input/TextArea"
-  import AInput from "ant-design-vue/es/input/Input"
+  import ATextarea from 'ant-design-vue/es/input/TextArea'
+  import AInput from 'ant-design-vue/es/input/Input'
+  import moment from 'moment'
 
   import { getRoleList, getServiceList } from '@/api/manage'
 
   export default {
-    name: "TableList",
+    name: 'TableList',
     components: {
       AInput,
       ATextarea,
@@ -277,6 +280,12 @@
       toggleAdvanced () {
         this.advanced = !this.advanced
       },
+
+      resetSearchForm () {
+        this.queryParam = {
+          date: moment(new Date())
+        }
+      }
     },
     watch: {
       /*

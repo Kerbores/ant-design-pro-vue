@@ -92,7 +92,7 @@
                   <template slot='title'>
                     该设定仅 [顶部栏导航] 时有效
                   </template>
-                  <a-select  size="small" style="width: 80px;" :defaultValue="contentWidth" @change="handleContentWidthChange">
+                  <a-select size="small" style="width: 80px;" :defaultValue="contentWidth" @change="handleContentWidthChange">
                     <a-select-option value="Fixed">固定</a-select-option>
                     <a-select-option value="Fluid" v-if="layoutMode !== 'sidemenu'">流式</a-select-option>
                   </a-select>
@@ -160,39 +160,25 @@
   import SettingItem from '@/components/setting/SettingItem'
   import config from '@/defaultSettings'
   import { updateTheme, updateColorWeak, colorList } from '@/components/tools/setting'
-  import { mapState } from 'vuex'
+  import { mixin, mixinDevice } from '@/utils/mixin.js'
 
   export default {
     components: {
       DetailList,
       SettingItem
     },
+    mixins: [mixin, mixinDevice],
     data() {
       return {
         visible: true,
         colorList,
       }
     },
-    computed: {
-      ...mapState({
-        navTheme: state => state.app.theme,
-        layoutMode: state => state.app.layout,
-        primaryColor: state => state.app.color,
-        colorWeak: state => state.app.weak,
-        fixedHeader: state => state.app.fixedHeader,
-        fixSiderbar: state => state.app.fixSiderbar,
-        autoHideHeader: state => state.app.autoHideHeader,
-        contentWidth: state => state.app.contentWidth,
-      }),
-    },
     watch: {
 
     },
     mounted () {
       const vm = this
-      /*this.$nextTick(() => {
-        vm.visible = false
-      })*/
       setTimeout(() => {
         vm.visible = false
       }, 16)
@@ -225,7 +211,7 @@
         this.$store.dispatch('ToggleLayoutMode', mode)
         // 因为顶部菜单不能固定左侧菜单栏，所以强制关闭
         //
-        this.handleFixSiderbar(false);
+        this.handleFixSiderbar(false)
       },
       handleContentWidthChange (type) {
         this.$store.dispatch('ToggleContentWidth', type)
@@ -245,7 +231,7 @@
       handleFixSiderbar (fixed) {
         if (this.layoutMode === 'topmenu') {
           this.$store.dispatch('ToggleFixSiderbar', false)
-          return;
+          return
         }
         this.$store.dispatch('ToggleFixSiderbar', fixed)
       }

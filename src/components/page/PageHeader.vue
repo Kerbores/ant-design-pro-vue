@@ -44,9 +44,9 @@
   import Breadcrumb from '@/components/tools/Breadcrumb'
 
   export default {
-    name: "PageHeader",
+    name: 'PageHeader',
     components: {
-      "s-breadcrumb": Breadcrumb
+      's-breadcrumb': Breadcrumb
     },
     props: {
       title: {
@@ -221,6 +221,16 @@
           margin-left: 0;
           min-width: 0;
           text-align: right;
+        }
+        .action {
+          margin-left: unset;
+          min-width: 266px;
+          flex: 0 1 auto;
+          text-align: left;
+          margin-bottom: 12px;
+          &:empty {
+            display: none;
+          }
         }
       }
     }
