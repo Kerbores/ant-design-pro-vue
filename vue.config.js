@@ -49,11 +49,14 @@ module.exports = {
   },
 
   devServer: {
+    open: process.platform === 'darwin',
+    disableHostCheck: true,
+    port: process.env.PORT || 8080,
+    https: false,
+    hotOnly: false,
     proxy: {
       '/api': {
-        // target: 'https://mock.ihx.me/mock/5baf3052f7da7e07e04a5116/antd-pro',
         target: 'https://mock.ihx.me/mock/5baf3052f7da7e07e04a5116/antd-pro',
-        ws: false,
         changeOrigin: true
       },
       '/gateway': {
@@ -67,11 +70,8 @@ module.exports = {
     }
   },
 
+  baseUrl: process.env.NODE_ENV === 'production' ? './' : '/',
+  outputDir: 'dist',
   lintOnSave: true,
-  baseUrl: undefined,
-  outputDir: undefined,
-  assetsDir: undefined,
-  runtimeCompiler: true,
-  productionSourceMap: undefined,
-  parallel: undefined
+  runtimeCompiler: true
 }
