@@ -4,12 +4,12 @@
     <a-form ref="formRegister" :autoFormCreate="(form)=>{this.form = form}" id="formRegister">
       <a-form-item
         fieldDecoratorId="email"
-        :fieldDecoratorOptions="{rules: [{ required: true, type: 'email', message: '请输入邮箱地址' }]}">
+        :fieldDecoratorOptions="{rules: [{ required: true, type: 'email', message: '请输入邮箱地址' }], validateTrigger: ['change', 'blur']}">
 
         <a-input size="large" type="text" placeholder="邮箱"></a-input>
       </a-form-item>
 
-      <a-popover placement="right" trigger="click" :visible="state.passwordLevelChecked">
+      <a-popover placement="rightTop" trigger="click" :visible="state.passwordLevelChecked">
         <template slot="content">
           <div :style="{ width: '240px' }" >
             <div :class="['user-register', passwordLevelClass]">强度：<span>{{ passwordLevelName }}</span></div>
@@ -21,31 +21,35 @@
         </template>
         <a-form-item
           fieldDecoratorId="password"
-          :fieldDecoratorOptions="{rules: [{ required: true, message: '至少6位密码，区分大小写'}, { validator: this.handlePasswordLevel }
-        ]}">
+          :fieldDecoratorOptions="{rules: [{ required: true, message: '至少6位密码，区分大小写'}, { validator: this.handlePasswordLevel }], validateTrigger: ['change', 'blur']}">
           <a-input size="large" type="password" @click="handlePasswordInputClick" autocomplete="false" placeholder="至少6位密码，区分大小写"></a-input>
         </a-form-item>
       </a-popover>
 
       <a-form-item
         fieldDecoratorId="password2"
-        :fieldDecoratorOptions="{rules: [{ required: true, message: '至少6位密码，区分大小写' }, { validator: this.handlePasswordCheck }]}">
+        :fieldDecoratorOptions="{rules: [{ required: true, message: '至少6位密码，区分大小写' }, { validator: this.handlePasswordCheck }], validateTrigger: ['change', 'blur']}">
 
         <a-input size="large" type="password" autocomplete="false" placeholder="确认密码"></a-input>
       </a-form-item>
 
       <a-form-item
         fieldDecoratorId="mobile"
-        :fieldDecoratorOptions="{rules: [{ required: true, message: '手机号' }], validateTrigger: 'blur'}">
-
-        <a-input-group size="large" compact>
-          <a-select style="width: 20%" size="large" defaultValue="+86">
+        :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入正确的手机号', pattern: /^1[3456789]\d{9}$/ }, { validator: this.handlePhoneCheck } ], validateTrigger: ['change', 'blur'] }">
+        <a-input size="large" placeholder="11 位手机号">
+          <a-select slot="addonBefore" size="large" defaultValue="+86">
             <a-select-option value="+86">+86</a-select-option>
             <a-select-option value="+87">+87</a-select-option>
           </a-select>
-          <a-input style="width: 80%" placeholder="11 位手机号"></a-input>
-        </a-input-group>
+        </a-input>
       </a-form-item>
+      <!--<a-input-group size="large" compact>
+            <a-select style="width: 20%" size="large" defaultValue="+86">
+              <a-select-option value="+86">+86</a-select-option>
+              <a-select-option value="+87">+87</a-select-option>
+            </a-select>
+            <a-input style="width: 80%" size="large" placeholder="11 位手机号"></a-input>
+          </a-input-group>-->
 
       <a-row :gutter="16">
         <a-col class="gutter-row" :span="16">
@@ -85,7 +89,7 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex'
+  import { mixinDevice } from '@/utils/mixin.js'
   import { getSmsCaptcha } from '@/api/login'
 
   const levelNames = {
@@ -107,9 +111,10 @@
     3: '#52c41a',
   }
   export default {
-    name: "Register",
+    name: 'Register',
     components: {
     },
+    mixins: [mixinDevice],
     data() {
       return {
         form: null,
@@ -126,9 +131,6 @@
       }
     },
     computed: {
-      ...mapState({
-        isMobile: state => state.app.device === 'mobile',
-      }),
       passwordLevelClass () {
         return levelClass[this.state.passwordLevel]
       },
@@ -173,17 +175,29 @@
       },
 
       handlePasswordCheck (rule, value, callback) {
-        let password = this.form.getFieldValue('password')
+        const password = this.form.getFieldValue('password')
+        console.log('value', value)
+        if (value === undefined) {
+          callback(new Error('请输入密码'))
+        }
         if (value && password && value.trim() !== password.trim()) {
           callback(new Error('两次密码不一致'))
         }
         callback()
       },
 
+      handlePhoneCheck (rule, value, callback) {
+       console.log('handlePhoneCheck, rule:', rule)
+        console.log('handlePhoneCheck, value', value)
+        console.log('handlePhoneCheck, callback', callback)
+
+       callback()
+      },
+
       handlePasswordInputClick () {
-        if (!this.isMobile) {
+        if (!this.isMobile()) {
           this.state.passwordLevelChecked = true
-          return;
+          return
         }
         this.state.passwordLevelChecked = false
       },
@@ -198,48 +212,48 @@
 
       getCaptcha(e) {
         e.preventDefault()
-        let that = this
+        const that = this
 
         this.form.validateFields(['mobile'], {force: true},
           (err, values) => {
             if (!err) {
-              this.state.smsSendBtn = true;
+              this.state.smsSendBtn = true
 
-              let interval = window.setInterval(() => {
+              const interval = window.setInterval(() => {
                 if (that.state.time-- <= 0) {
-                  that.state.time = 60;
-                  that.state.smsSendBtn = false;
-                  window.clearInterval(interval);
+                  that.state.time = 60
+                  that.state.smsSendBtn = false
+                  window.clearInterval(interval)
                 }
-              }, 1000);
+              }, 1000)
 
-              const hide = this.$message.loading('验证码发送中..', 0);
+              const hide = this.$message.loading('验证码发送中..', 0)
 
               getSmsCaptcha({mobile: values.mobile}).then(res => {
-                setTimeout(hide, 2500);
+                setTimeout(hide, 2500)
                 this.$notification['success']({
                   message: '提示',
                   description: '验证码获取成功，您的验证码为：' + res.result.captcha,
                   duration: 8
                 })
               }).catch(err => {
-                setTimeout(hide, 1);
-                clearInterval(interval);
-                that.state.time = 60;
-                that.state.smsSendBtn = false;
-                this.requestFailed(err);
-              });
+                setTimeout(hide, 1)
+                clearInterval(interval)
+                that.state.time = 60
+                that.state.smsSendBtn = false
+                this.requestFailed(err)
+              })
             }
           }
-        );
+        )
       },
       requestFailed(err) {
         this.$notification['error']({
           message: '错误',
-          description: ((err.response || {}).data || {}).message || "请求出现错误，请稍后再试",
+          description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
           duration: 4,
-        });
-        this.registerBtn = false;
+        })
+        this.registerBtn = false
       },
     },
     watch: {
@@ -263,6 +277,14 @@
 
     &.success {
       color: #52c41a;
+    }
+
+
+  }
+
+  .user-layout-register {
+    .ant-input-group-addon:first-child {
+      background-color: #fff;
     }
   }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="result">
     <div>
-      <a-icon :class="[isSuccess ? 'success' : 'error' ,'icon']" :type="isSuccess ? 'check-circle' : 'close-circle'"/>
+      <a-icon :class="{ 'icon': true, 'success': isSuccess, 'error': !isSuccess }" :type="isSuccess ? 'check-circle' : 'close-circle'"/>
     </div>
     <div class="title" v-if="title">{{ title }}</div>
     <div class="description" v-if="description">{{ description }}</div>
@@ -16,8 +16,7 @@
 
 <script>
   export default {
-    name: "Result",
-    // 'isSuccess', 'title', 'description'
+    name: 'Result',
     props: {
       isSuccess: {
         type: Boolean,
@@ -78,6 +77,14 @@
     }
     .action {
       margin-top: 32px;
+    }
+  }
+
+  .mobile {
+    .result {
+      width: 100%;
+      margin: 0 auto;
+      padding: unset;
     }
   }
 </style>

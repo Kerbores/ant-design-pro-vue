@@ -1,4 +1,4 @@
-import { UserLayout, BasicLayout, RouteView, PageView } from '@/components/layouts'
+import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/components/layouts'
 
 export const asyncRouterMap = [
 
@@ -13,7 +13,7 @@ export const asyncRouterMap = [
       {
         path: '/dashboard',
         name: 'dashboard',
-        redirect: '/dashboard/analysis',
+        redirect: '/dashboard/workplace',
         component: RouteView,
         meta: { title: '仪表盘', icon: 'dashboard', permission: [ 'dashboard' ] },
         children: [
@@ -98,6 +98,12 @@ export const asyncRouterMap = [
             name: 'RoleList',
             component: () => import('@/views/list/RoleList'),
             meta: { title: '角色列表', permission: [ 'table' ] }
+          },
+          {
+            path: '/list/system-role',
+            name: 'SystemRole',
+            component: () => import('@/views/role/RoleList'),
+            meta: { title: '角色列表2', permission: [ 'table' ]}
           },
           {
             path: '/list/permission-list',
@@ -309,6 +315,19 @@ export const constantRouterMap = [
         path: 'register-result',
         name: 'registerResult',
         component: () => import(/* webpackChunkName: "user" */ '@/views/user/RegisterResult')
+      }
+    ]
+  },
+
+  {
+    path: '/test',
+    component: BlankLayout,
+    redirect: '/test/home',
+    children: [
+      {
+        path: 'home',
+        name: 'TestHome',
+        component: () => import('@/views/Home')
       }
     ]
   },

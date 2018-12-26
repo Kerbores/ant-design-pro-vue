@@ -22,7 +22,7 @@
         </div>
         <div slot="action">
           <a-button type="primary" @click="finish">再转一笔</a-button>
-          <a-button style="margin-left: 8px">查看账单</a-button>
+          <a-button style="margin-left: 8px" @click="toOrderList">查看账单</a-button>
         </div>
       </result>
     </a-form>
@@ -33,7 +33,7 @@
   import Result from '../../result/Result'
 
   export default {
-    name: "Step3",
+    name: 'Step3',
     components: {
       Result
     },
@@ -45,6 +45,9 @@
     methods: {
       finish () {
         this.$emit('finish')
+      },
+      toOrderList () {
+        this.$router.push('/list/query-list')
       }
     }
   }

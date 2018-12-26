@@ -38,7 +38,7 @@
               <span v-else>
                 <a @click="saveRow(record.key)">保存</a>
                 <a-divider type="vertical" />
-                <a @click="cancle(record.key)">取消</a>
+                <a @click="cancel(record.key)">取消</a>
               </span>
             </template>
             <span v-else>
@@ -50,12 +50,12 @@
             </span>
           </template>
         </a-table>
-        <a-button style="width: 100%; margin-top: 16px; margin-bottom: 8px" type="dashed" icon="plus" @click="newMeber">新增成员</a-button>
+        <a-button style="width: 100%; margin-top: 16px; margin-bottom: 8px" type="dashed" icon="plus" @click="newMember">新增成员</a-button>
       </form>
     </a-card>
 
     <!-- fixed footer toolbar -->
-    <footer-tool-bar>
+    <footer-tool-bar :style="{ width: isSideMenu() && isDesktop() ? `calc(100% - ${sidebarOpened ? 256 : 80}px)` : '100%'}">
       <a-button type="primary" @click="validate" :loading="loading">提交</a-button>
     </footer-tool-bar>
   </div>
@@ -64,10 +64,12 @@
 <script>
   import RepositoryForm from './RepositoryForm'
   import TaskForm from './TaskForm'
-  import FooterToolBar from '@/components/tools/FooterToolBar'
+  import FooterToolBar from '@/components/FooterToolbar'
+  import { mixin, mixinDevice } from '@/utils/mixin'
 
   export default {
-    name: "AdvancedForm",
+    name: 'AdvancedForm',
+    mixins: [mixin, mixinDevice],
     components: {
       FooterToolBar,
       RepositoryForm,
@@ -136,7 +138,7 @@
       handleSubmit (e) {
         e.preventDefault()
       },
-      newMeber () {
+      newMember () {
         this.data.push({
           key: '-1',
           name: '',
@@ -151,20 +153,20 @@
         this.data = newData
       },
       saveRow (key) {
-        let target = this.data.filter(item => item.key === key)[0]
+        const target = this.data.filter(item => item.key === key)[0]
         target.editable = false
         target.isNew = false
       },
       toggle (key) {
-        let target = this.data.filter(item => item.key === key)[0]
+        const target = this.data.filter(item => item.key === key)[0]
         target.editable = !target.editable
       },
       getRowByKey (key, newData) {
         const data = this.data
         return (newData || data).filter(item => item.key === key)[0]
       },
-      cancle (key) {
-        let target = this.data.filter(item => item.key === key)[0]
+      cancel (key) {
+        const target = this.data.filter(item => item.key === key)[0]
         target.editable = false
       },
       handleChange (value, key, column) {

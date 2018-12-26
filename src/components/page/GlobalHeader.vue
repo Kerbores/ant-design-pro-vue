@@ -1,16 +1,17 @@
 <template>
-  <a-layout-header v-if="!headerBarFixed" :class="[fixedHeader && 'ant-header-fixedHeader']" :style="{ padding: '0', width: fixedHeader ? `calc(100% - ${sidebarOpened ? 256 : 80}px)` : '100%' }">
+  <!-- , width: fixedHeader ? `calc(100% - ${sidebarOpened ? 256 : 80}px)` : '100%'  -->
+  <a-layout-header v-if="!headerBarFixed" :class="[fixedHeader && 'ant-header-fixedHeader', sidebarOpened ? 'ant-header-side-opened' : 'ant-header-side-closed', ]" :style="{ padding: '0' }">
     <div v-if="mode === 'sidemenu'" class="header">
       <a-icon
         v-if="device==='mobile'"
         class="trigger"
         :type="collapsed ? 'menu-fold' : 'menu-unfold'"
-        @click.native="toggle"></a-icon>
+        @click="toggle"></a-icon>
       <a-icon
         v-else
         class="trigger"
         :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-        @click.native="toggle"/>
+        @click="toggle"/>
 
       <user-menu></user-menu>
     </div>
@@ -28,7 +29,7 @@
             v-else
             class="trigger"
             :type="collapsed ? 'menu-fold' : 'menu-unfold'"
-            @click.native="toggle"></a-icon>
+            @click="toggle"></a-icon>
         </div>
         <user-menu class="header-index-right"></user-menu>
       </div>
@@ -42,20 +43,25 @@
   import SMenu from '../menu/'
   import Logo from '../tools/Logo'
 
-  import { mapState } from 'vuex'
+  import { mixin } from '@/utils/mixin.js'
 
   export default {
-    name: "LayoutHeader",
+    name: 'GlobalHeader',
     components: {
       UserMenu,
       SMenu,
       Logo
     },
+    mixins: [mixin],
     props: {
       mode: {
         type: String,
         // sidemenu, topmenu
         default: 'sidemenu'
+      },
+      menus: {
+        type: Array,
+        required: true
       },
       theme: {
         type: String,
@@ -75,28 +81,16 @@
     },
     data() {
       return {
-        menus: [],
         headerBarFixed: false,
       }
     },
     mounted () {
       window.addEventListener('scroll', this.handleScroll)
     },
-    created() {
-      this.menus = this.mainMenu.find((item) => item.path === '/').children
-    },
-    computed: {
-      ...mapState({
-        mainMenu: state => state.permission.addRouters,
-        sidebarOpened: state => state.app.sidebar.opened,
-        fixedHeader: state => state.app.fixedHeader,
-        swipeDownHiddenHeader: state => state.app.swipeDownHiddenHeader,
-      }),
-    },
     methods: {
       handleScroll () {
-        if (this.swipeDownHiddenHeader) {
-          let scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
+        if (this.autoHideHeader) {
+          const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop
           if (scrollTop > 100) {
             this.headerBarFixed = true
           } else {
