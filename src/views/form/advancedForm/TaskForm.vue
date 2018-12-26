@@ -21,7 +21,7 @@
             v-decorator="[
               'task.executor',
               {rules: [{ required: true, message: '请选择执行人'}]}
-            ]" >
+          ]" >
             <a-select-option value="黄丽丽">黄丽丽</a-select-option>
             <a-select-option value="李大刀">李大刀</a-select-option>
           </a-select>
@@ -37,7 +37,7 @@
             v-decorator="[
               'task.manager',
               {rules: [{ required: true, message: '请选择责任人'}]}
-            ]" >
+          ]" >
             <a-select-option value="王伟">王伟</a-select-option>
             <a-select-option value="李红军">李红军</a-select-option>
           </a-select>
@@ -51,7 +51,7 @@
             v-decorator="[
               'task.time',
               {rules: [{ required: true, message: '请选择提醒时间'}]}
-            ]" />
+          ]" />
         </a-form-item>
       </a-col>
       <a-col :xl="{span: 9, offset: 1}" :lg="{span: 10}" :md="{span: 24}" :sm="24">

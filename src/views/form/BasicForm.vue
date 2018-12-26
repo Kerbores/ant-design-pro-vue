@@ -23,7 +23,7 @@
           v-decorator="[
             'buildTime',
             {rules: [{ required: true, message: '请选择起止日期' }]}
-          ]" />
+        ]" />
       </a-form-item>
       <a-form-item
         label="目标描述"
@@ -35,7 +35,7 @@
           v-decorator="[
             'description',
             {rules: [{ required: true, message: '请输入目标描述' }]}
-          ]" />
+        ]" />
       </a-form-item>
       <a-form-item
         label="衡量标准"
@@ -47,7 +47,7 @@
           v-decorator="[
             'type',
             {rules: [{ required: true, message: '请输入衡量标准' }]}
-          ]" />
+        ]" />
       </a-form-item>
       <a-form-item
         label="客户"
@@ -58,7 +58,7 @@
           v-decorator="[
             'customer',
             {rules: [{ required: true, message: '请描述你服务的客户' }]}
-          ]" />
+        ]" />
       </a-form-item>
       <a-form-item
         label="邀评人"

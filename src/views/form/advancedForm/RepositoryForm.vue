@@ -8,7 +8,7 @@
             v-decorator="[
               'repository.name',
               {rules: [{ required: true, message: '请输入仓库名称', whitespace: true}]}
-            ]" />
+          ]" />
         </a-form-item>
       </a-col>
       <a-col :xl="{span: 7, offset: 1}" :lg="{span: 8}" :md="{span: 12}" :sm="24">
@@ -21,7 +21,7 @@
             v-decorator="[
               'repository.domain',
               {rules: [{ required: true, message: '请输入仓库域名', whitespace: true}, {validator: validate}]}
-            ]" />
+          ]" />
         </a-form-item>
       </a-col>
       <a-col :xl="{span: 9, offset: 1}" :lg="{span: 10}" :md="{span: 24}" :sm="24">
@@ -53,7 +53,7 @@
             v-decorator="[
               'repository.effectiveDate',
               {rules: [{ required: true, message: '请选择生效日期'}]}
-            ]" />
+          ]" />
         </a-form-item>
       </a-col>
       <a-col :xl="{span: 9, offset: 1}" :lg="{span: 10}" :md="{span: 24}" :sm="24">
@@ -64,7 +64,7 @@
             v-decorator="[
               'repository.type',
               {rules: [{ required: true, message: '请选择仓库类型'}]}
-            ]" >
+          ]" >
             <a-select-option value="公开">公开</a-select-option>
             <a-select-option value="私密">私密</a-select-option>
           </a-select>
