@@ -16,7 +16,7 @@
             fieldDecoratorId="username"
             :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入帐户名或邮箱地址' }, { validator: this.handleUsernameOrEmail }], validateTrigger: 'change'}"
           >
-            <a-input size="large" type="text" placeholder="帐户名或邮箱地址 / admin">
+            <a-input size="large" type="text" placeholder="帐户名或邮箱地址 ">
               <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
             </a-input>
           </a-form-item>
@@ -25,7 +25,7 @@
             fieldDecoratorId="password"
             :fieldDecoratorOptions="{rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur'}"
           >
-            <a-input size="large" type="password" autocomplete="false" placeholder="密码 / admin">
+            <a-input size="large" type="password" autocomplete="false" placeholder="请输入密码 ">
               <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }"/>
             </a-input>
           </a-form-item>
@@ -66,11 +66,11 @@
 
       <a-form-item>
         <a-checkbox v-model="formLogin.rememberMe">自动登陆</a-checkbox>
-        <router-link
+        <!-- <router-link
           :to="{ name: 'recover', params: { user: 'aaa'} }"
           class="forge-password"
           style="float: right;"
-        >忘记密码</router-link>
+        >忘记密码</router-link> -->
       </a-form-item>
 
       <a-form-item style="margin-top:24px">
@@ -85,7 +85,7 @@
         >确定</a-button>
       </a-form-item>
 
-      <div class="user-login-other">
+      <!-- <div class="user-login-other">
         <span>其他登陆方式</span>
         <a>
           <a-icon class="item-icon" type="alipay-circle"></a-icon>
@@ -97,7 +97,7 @@
           <a-icon class="item-icon" type="weibo-circle"></a-icon>
         </a>
         <router-link class="register" :to="{ name: 'register' }">注册账户</router-link>
-      </div>
+      </div> -->
     </a-form>
 
     <two-step-captcha
